@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Fakery",
+        "repositoryURL": "https://github.com/vadymmarkov/Fakery.git",
+        "state": {
+          "branch": null,
+          "revision": "71cb3bf36a808534659d1248780c2bf3c4c4fc91",
+          "version": "5.1.0"
+        }
+      },
+      {
+        "package": "LoremSwiftum",
+        "repositoryURL": "https://github.com/lukaskubanek/LoremSwiftum.git",
+        "state": {
+          "branch": "master",
+          "revision": "8942e732e50458cde5dccf9996afa16f29372853",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
