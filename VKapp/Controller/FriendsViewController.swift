@@ -10,7 +10,12 @@ import Fakery
 
 class FriendsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, LetterPickerDelegate, UISearchBarDelegate {
     
-    let service = VKAPI()
+    lazy var service = VKAPI()
+    
+    var sections: [String] = []
+    var allFriends: [User] = []
+    var filteredFriends: [User] = []
+    var cashedSectionFriends: [String: [User]] = [:]
     
 //    let friends = User.randomMany.sorted { $0.fullName.lowercased() < $1.fullName.lowercased() }
     
@@ -25,8 +30,8 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         tableView.register(UINib(nibName: "CustomHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "CustomHeader")
         
         setupAllFriends()
-        reloadDataSource()
-        setupViews()
+        self.reloadDataSource()
+        self.setupViews()
         
     }
     
@@ -34,16 +39,23 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     //MARK: - Setup
     
     private func setupAllFriends() {
-        allFriends = User.randomMany.sorted { $0.fullName.lowercased() < $1.fullName.lowercased() }
+        service.getFriends() { friends in
+            self.allFriends = friends.filter { $0.firstName != "DELETED" }
+            self.reloadDataSource()
+            self.tableView.reloadData()
+            self.setupViews()
+        }
     }
     
     private func reloadDataSource() {
         filterFriends(text: searchBar.text)
+    
         
         let allLetters = filteredFriends.map { $0.lastName.uppercased().prefix(1) }
         sections = Array(Set(allLetters)).sorted().map {String($0)}
         
         cashedSectionFriends = [:]
+        
     }
     
     private func setupViews() {
@@ -52,11 +64,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     //MARK: -  Data Source
     
-    var sections: [String] = []
-    var allFriends: [User] = []
-    var filteredFriends: [User] = []
-
-    var cashedSectionFriends: [String: [User]] = [:]
+    
     
     func getFriends(for section: Int) -> [User] {
         let sectionLetter = sections[section]
@@ -89,15 +97,18 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     // MARK: - Segues
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let controller = segue.destination as? FriendCollectionViewController,
-        let indexPath = tableView.indexPathForSelectedRow
-        else { return }
+        guard
+            let controller = segue.destination as? FriendCollectionViewController,
+            let indexPath = tableView.indexPathForSelectedRow
+            else { return }
         
         let friend = getFriend(for: indexPath)
-        controller.photos = friend.photos
-        controller.title = friend.fullName 
+        controller.title = friend.fullName
+        service.getAllPhotos(ownerId: friend.id) {photos in
+            controller.photos = photos
+            controller.collectionView.reloadData()
+        }
     }
-
     // MARK: - Table view data source
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -112,8 +123,9 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as! FriendTableViewCell
         let friend = getFriend(for: indexPath)
         cell.friendTittleLabel?.text = friend.fullName
-        let image = UIImage.loadAvatar(friend.avatar)
-        cell.avatarView.imageView.image = image?.resizeWithScaleAspectFitMode(to: 50)
+        if let url = URL(string: friend.avatar) {
+            cell.avatarView.imageView.loadAvatar(url: url)
+        }
         
         return cell
     }

@@ -34,8 +34,11 @@ class FriendCollectionViewController: UICollectionViewController, UICollectionVi
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! FriendCollectionViewCell
-        let image = UIImage(named: photos[indexPath.row])
-        cell.friendImage.image = image?.resizeWithScaleAspectFitMode(to: 180)
+        let photo = photos[indexPath.row]
+        
+        if let url = URL(string: photo) {
+            cell.friendImage.loadAvatar(url: url)
+        }
         return cell
     }
     

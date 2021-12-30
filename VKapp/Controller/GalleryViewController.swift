@@ -19,9 +19,16 @@ final class GalleryViewController: UIViewController {
     
     var photos: [String] = [] {
         didSet {
-            self.images = photos.compactMap {UIImage.loadAvatar($0) }
+            let urls = photos.compactMap { URL(string: $0) }
+            UIImage.loadImages(urls: urls) { images in
+                self.images = images
+                DispatchQueue.main.async {
+                    self.imageView.image = self.images[self.currentIndex]
+                }
+            }
         }
     }
+    
     var images: [UIImage] = []
     var currentIndex = 0
     
@@ -37,7 +44,6 @@ final class GalleryViewController: UIViewController {
         imageView.contentMode = .scaleAspectFit
         nextImageView.contentMode = .scaleAspectFit
         
-        imageView.image = images[currentIndex]
         
         let pan = UIPanGestureRecognizer(target: self, action: #selector(onPan))
         

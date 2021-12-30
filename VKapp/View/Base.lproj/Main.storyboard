@@ -168,18 +168,20 @@
                                     </connections>
                                 </searchBar>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="friendCell" id="yDV-es-4B6" customClass="FriendTableViewCell" customModule="VKapp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="88.666666030883789" width="390" height="43.333332061767578"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="friendCell" rowHeight="64" id="yDV-es-4B6" customClass="FriendTableViewCell" customModule="VKapp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="88.666666030883789" width="390" height="64"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yDV-es-4B6" id="Yr8-hv-2OZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="390" height="43.333332061767578"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="390" height="64"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pGh-Wh-dX9" customClass="AvatarImage" customModule="VKapp" customModuleProvider="target">
-                                                    <rect key="frame" x="14.999999999999998" y="6.9999999999999982" width="29.333333333333329" height="29.333333333333329"/>
+                                                    <rect key="frame" x="15" y="7" width="50" height="50"/>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <constraints>
+                                                        <constraint firstAttribute="height" constant="50" id="7eI-FU-dh4"/>
                                                         <constraint firstAttribute="width" secondItem="pGh-Wh-dX9" secondAttribute="height" multiplier="1:1" id="hM0-Qu-6si"/>
+                                                        <constraint firstAttribute="width" constant="50" id="uTh-zZ-KFB"/>
                                                     </constraints>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
@@ -191,7 +193,7 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </view>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rho-dR-cxZ">
-                                                    <rect key="frame" x="59.333333333333343" y="10.999999999999998" width="305.66666666666663" height="21.333333333333329"/>
+                                                    <rect key="frame" x="80" y="11" width="285" height="42"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>

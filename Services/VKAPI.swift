@@ -8,15 +8,37 @@
 import Foundation
 import Alamofire
 
+struct FriendsResponseOk: Decodable {
+    var items: [User]
+}
+
+struct FriendsResponse: Decodable {
+    var response: FriendsResponseOk
+}
+
+struct PhotoSizeItem: Decodable {
+    var url: String
+}
+
+struct PhotoItem: Decodable {
+    var id: Int
+    var sizes: [PhotoSizeItem]
+}
+
+struct PhotosResponseOk: Decodable {
+    var items: [PhotoItem]
+}
+
+struct PhotosResponse:Decodable {
+    var response: PhotosResponseOk
+}
+
 class VKAPI {
     
     let baseUrl = "https://api.vk.com/method/"
     let vApi = "5.131"
     
-    
-    
-    
-    func callAPI(method: String, params: [String: String]) {
+    func callAPI(method: String, params: [String: String], completion: @escaping (AFDataResponse<Data>) -> Void) {
         var defParams = [
             "access_token": UserSession.shared.accessToken,
             "v": vApi
@@ -26,25 +48,46 @@ class VKAPI {
         
         let url = baseUrl + method
         
-        AF.request(url, parameters: parametres).responseJSON { (response) in
-            print(response.value ?? "NO JSON")
+        AF.request(url, parameters: parametres).responseData(completionHandler: completion)
+    }
+    
+    
+    func getFriends (completionHandler:  @escaping ([User]) -> Void)  {
+        callAPI(method: "friends.get", params: ["fields": "photo_100"]) { response in
+            guard let data = response.data else {return}
+            do {
+                let friendsResponse = try JSONDecoder().decode(FriendsResponse.self, from: data)
+                completionHandler(friendsResponse.response.items)
+            } catch {
+                print(error)
+                completionHandler([])
+            }
+        }
+    }
+        
+    func getAllPhotos (ownerId: Int, completionHandler:  @escaping ([String])->Void) {
+        callAPI(method: "photos.getAll", params: ["owner_id": String(ownerId)]){ response in
+            guard let data = response.data else {return}
+            do {
+                let friendsResponse = try JSONDecoder().decode(PhotosResponse.self, from: data)
+                var aaa: [String] = []
+                for photo in friendsResponse.response.items {
+                    aaa.append(photo.sizes[0].url)
+                }
+                completionHandler(aaa)
+            } catch {
+                print(error)
+                completionHandler([])
+            }
         }
     }
     
-    func getFriends () {
-        callAPI(method: "friends.get", params: ["fields": "photo_id"])
-    }
-    
-    func getAllPhotos (ownerId: String) {
-        callAPI(method: "photos.getAll", params: ["owner_id": ownerId])
-    }
-    
     func getGroups () {
-        callAPI(method: "groups.get", params: ["extended": "1"])
+        //        callAPI(method: "groups.get", params: ["extended": "1"])
     }
     
     func searchGroups (q:String) {
-        callAPI(method: "groups.search", params: ["q": q])
+        //        callAPI(method: "groups.search", params: ["q": q])
     }
 }
 

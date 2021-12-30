@@ -195,7 +195,35 @@ extension UIImage {
     // MARK: - LoadAvatar
     
     static func loadAvatar(_ title: String) -> UIImage? {
-        UIImage(named: title)
+        return UIImage(named: "Avatars/\(title)")
     }
+    
+    static func loadImages(urls: [URL], completionHanldler: @escaping ([UIImage])->Void) {
+        DispatchQueue.global().async {
+            var images : [UIImage] = []
+            for url in urls {
+                if let data = try? Data(contentsOf: url) {
+                    if let image = UIImage(data: data) {
+                        images.append(image)
+                    }
+                }
+            }
+            completionHanldler(images)
+        }
+    }
+    
+}
 
+extension UIImageView {
+    func loadAvatar(url: URL) {
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self?.image = image.resizeWithScaleAspectFitMode(to: 50)
+                    }
+                }
+            }
+        }
+    }
 }
