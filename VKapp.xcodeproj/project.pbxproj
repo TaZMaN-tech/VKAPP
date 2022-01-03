@@ -36,6 +36,7 @@
 		C0C14315275A4B2B00046F7D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C14314275A4B2B00046F7D /* User.swift */; };
 		C0C14317275A4BAF00046F7D /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C14316275A4BAF00046F7D /* Group.swift */; };
 		C0C14328275AA4F900046F7D /* FriendCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0C14327275AA4F900046F7D /* FriendCollectionViewController.swift */; };
+		C0CF301C2783306C007DB24E /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C0CF301B2783306C007DB24E /* Alamofire */; };
 		C0E73D21275F501B00DF9F22 /* LikeControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E73D20275F501B00DF9F22 /* LikeControl.swift */; };
 		C0E73D232760D94F00DF9F22 /* LetterPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E73D222760D94F00DF9F22 /* LetterPicker.swift */; };
 		C0E863D32763531C00D9FFFD /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E863D22763531C00D9FFFD /* CustomHeader.swift */; };
@@ -92,6 +93,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C04A8060276CE931005E44D8 /* Fakery in Frameworks */,
+				C0CF301C2783306C007DB24E /* Alamofire in Frameworks */,
 				C04A805D276CE901005E44D8 /* LoremSwiftum in Frameworks */,
 				AB9B89650DECB5BB2E8D6925 /* Pods_VKapp.framework in Frameworks */,
 			);
@@ -269,6 +271,7 @@
 			packageProductDependencies = (
 				C04A805C276CE901005E44D8 /* LoremSwiftum */,
 				C04A805F276CE931005E44D8 /* Fakery */,
+				C0CF301B2783306C007DB24E /* Alamofire */,
 			);
 			productName = VKapp;
 			productReference = C0173A262726B0AA00572709 /* VKapp.app */;
@@ -301,6 +304,7 @@
 			packageReferences = (
 				C04A805B276CE901005E44D8 /* XCRemoteSwiftPackageReference "LoremSwiftum" */,
 				C04A805E276CE931005E44D8 /* XCRemoteSwiftPackageReference "Fakery" */,
+				C0CF301A2783306C007DB24E /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = C0173A272726B0AA00572709 /* Products */;
 			projectDirPath = "";
@@ -642,6 +646,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		C0CF301A2783306C007DB24E /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -654,6 +666,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C04A805E276CE931005E44D8 /* XCRemoteSwiftPackageReference "Fakery" */;
 			productName = Fakery;
+		};
+		C0CF301B2783306C007DB24E /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C0CF301A2783306C007DB24E /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

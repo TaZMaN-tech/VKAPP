@@ -9,10 +9,22 @@ import UIKit
 
 class GroupsTableViewController: UITableViewController {
     
+    lazy var service = VKAPI()
+    
     var myGroups: [Group] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        setupGroups()
+    }
+    
+    //MARK: - Setup
+    
+    private func setupGroups() {
+        service.getGroups() { groups in
+            self.myGroups = groups
+            self.tableView.reloadData()
+        }
     }
 
     // MARK: - Table view data source
@@ -30,9 +42,12 @@ class GroupsTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "myGroupCell", for: indexPath) as! FriendTableViewCell
 
         let group = myGroups[indexPath.row]
-        let image = UIImage(named: group.groupImage)
-        cell.friendTittleLabel.text = group.name
-        cell.avatarView.image = image?.resizeWithScaleAspectFitMode(to: 50)
+//        let image = UIImage(named: group.groupImage)
+        cell.friendTittleLabel?.text = group.name
+//        cell.avatarView.image = image?.resizeWithScaleAspectFitMode(to: 50)
+        if let url = URL(string: group.groupImage) {
+            cell.avatarView.imageView.loadAvatar(url: url)
+        }
 
         return cell
     }

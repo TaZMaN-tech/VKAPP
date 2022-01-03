@@ -220,7 +220,7 @@ extension UIImageView {
             if let data = try? Data(contentsOf: url) {
                 if let image = UIImage(data: data) {
                     DispatchQueue.main.async {
-                        self?.image = image.resizeWithScaleAspectFitMode(to: 50)
+                        self?.image = image//.resizeWithScaleAspectFitMode(to: 50)
                     }
                 }
             }

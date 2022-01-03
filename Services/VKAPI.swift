@@ -33,6 +33,15 @@ struct PhotosResponse:Decodable {
     var response: PhotosResponseOk
 }
 
+struct GroupsResponseOk: Decodable {
+    var count: Int
+    var items: [Group]
+}
+
+struct GroupsResponse: Decodable {
+    var response: GroupsResponseOk
+}
+
 class VKAPI {
     
     let baseUrl = "https://api.vk.com/method/"
@@ -82,8 +91,17 @@ class VKAPI {
         }
     }
     
-    func getGroups () {
-        //        callAPI(method: "groups.get", params: ["extended": "1"])
+    func getGroups (completionHnadler: @escaping ([Group]) -> Void) {
+        callAPI(method: "groups.get", params: ["access_token": String(UserSession.shared.accessToken), "extended": "1"]) { response in
+            guard let data = response.data else {return}
+            do {
+                let groupsResponse = try JSONDecoder().decode(GroupsResponse.self, from: data)
+                completionHnadler(groupsResponse.response.items)
+            } catch let error {
+                print(error)
+                completionHnadler([])
+            }
+        }
     }
     
     func searchGroups (q:String) {

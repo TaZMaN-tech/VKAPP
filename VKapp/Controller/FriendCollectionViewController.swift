@@ -24,7 +24,7 @@ class FriendCollectionViewController: UICollectionViewController, UICollectionVi
     }
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        photos.count
+        photos.count / 2 + 1
     }
 
 
@@ -34,7 +34,11 @@ class FriendCollectionViewController: UICollectionViewController, UICollectionVi
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! FriendCollectionViewCell
-        let photo = photos[indexPath.row]
+        let idx = indexPath.section*2 + indexPath.row
+        if (idx >= photos.count) {
+            return cell
+        }
+        let photo = photos[idx]
         
         if let url = URL(string: photo) {
             cell.friendImage.loadAvatar(url: url)
@@ -58,6 +62,7 @@ class FriendCollectionViewController: UICollectionViewController, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         Constants.padding
     }
+    
     
     //MARK: - Segues
     
