@@ -9,15 +9,24 @@ import Foundation
 import UIKit
 import Fakery
 import LoremSwiftum
+import RealmSwift
 
 let faker = Faker()
 
-struct User:Decodable {
-    var firstName: String
-    var lastName: String
-    var avatar: String
-    var id: Int
-    var photos: [String]
+//class Photo: Object, Decodable {
+//    @Persisted var url: String = ""
+//}
+
+class User: Object, Decodable {
+    @Persisted var firstName: String = ""
+    @Persisted var lastName: String = ""
+    @Persisted var avatar: String = ""
+    @Persisted var id: Int = 0
+//    @Persisted var photos: List<Photo>
+    
+    override class func primaryKey() -> String? {
+        "id"
+    }
     
     enum CodingKeys: String, CodingKey {
         case firstName = "first_name"
@@ -30,14 +39,15 @@ struct User:Decodable {
         return "\(firstName) \(lastName)"
     }
     
-    init(from decoder: Decoder) throws {
+    required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.firstName = try container.decode(String.self, forKey: .firstName)
         self.lastName = try container.decode(String.self, forKey: .lastName)
         self.avatar = try container.decodeIfPresent(String.self, forKey: .avatar) ?? ""
         self.id = try container.decode(Int.self, forKey: .id)
-        self.photos = []
     }
 
     //MARK: - Fake
@@ -51,3 +61,7 @@ struct User:Decodable {
 //        (1...20).map { _ in User.randomOne }
 //    }
 }
+
+//class Photos: Object {
+//    @objc dynamic var url: String = ""
+//}

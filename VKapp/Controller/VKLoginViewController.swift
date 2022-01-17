@@ -8,19 +8,25 @@
 import UIKit
 import WebKit
 
-class VKLoginViewController: UIViewController {
+class VKLoginViewController: UIViewController, WKNavigationDelegate {
     
     let service = VKAPI()
 
     @IBOutlet weak var webview: WKWebView! {
-            didSet{
-                webview.navigationDelegate = self
-            }
+        didSet{
+            webview.navigationDelegate = self
         }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        getLogin()
+        let userDefaults = UserDefaults.standard
+        let token = userDefaults.string(forKey: "accessToken") ?? ""
+        if token != "" {
+            doLogin(token)
+        } else {
+            getLogin()
+        }
     }
     
     func getLogin() {
@@ -41,10 +47,13 @@ class VKLoginViewController: UIViewController {
             
             webview.load(request)
     }
+        
+    func doLogin(_ token: String) {
+        print(token)
+        UserSession.shared.accessToken = token
+        performSegue(withIdentifier: "SegueAfterLogin", sender: self)
+    }
     
-}
-
-extension VKLoginViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
         guard let url = navigationResponse.response.url, url.path == "/blank.html",
@@ -65,13 +74,12 @@ extension VKLoginViewController: WKNavigationDelegate {
                 return dict
         }
         
-        let token = params["access_token"]
+        let token = params["access_token"] ?? ""
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(token, forKey: "accessToken")
         
-        print(token)
+        doLogin(token)
         
-        UserSession.shared.accessToken = token ?? ""
-        performSegue(withIdentifier: "SegueAfterLogin", sender: self)
         decisionHandler(.cancel)
     }
-
 }

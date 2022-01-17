@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class AllGroupsTableViewController: UITableViewController {
 
@@ -14,18 +15,30 @@ class AllGroupsTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupGroups()
+        loadsGroupsFromRealm()
+       // setupGroups()
         
     }
     
     //MARK: - Setup
     
-    private func setupGroups() {
-        service.getGroups() { groups in
-            self.groups = groups
+    func loadsGroupsFromRealm() {
+        do {
+            let realm = try Realm()
+            let items = realm.objects(Group.self)
+            self.groups = Array(items)
             self.tableView.reloadData()
+        } catch {
+            print(error)
         }
     }
+    
+//    private func setupGroups() {
+//        service.getGroups() { groups in
+//            self.groups = groups
+//            self.tableView.reloadData()
+//        }
+//    }
 
     // MARK: - Table view data source
 

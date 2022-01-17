@@ -7,6 +7,10 @@
 
 import Foundation
 import Alamofire
+import RealmSwift
+
+let config = Realm.Configuration(deleteRealmIfMigrationNeeded: true)
+let realm = try! Realm(configuration: config)
 
 struct FriendsResponseOk: Decodable {
     var items: [User]
@@ -16,13 +20,17 @@ struct FriendsResponse: Decodable {
     var response: FriendsResponseOk
 }
 
-struct PhotoSizeItem: Decodable {
-    var url: String
+class PhotoSizeItem: Object, Codable {
+    @Persisted var url: String
 }
 
-struct PhotoItem: Decodable {
-    var id: Int
-    var sizes: [PhotoSizeItem]
+class PhotoItem: Object, Codable {
+    @Persisted var id: Int = 0
+    @Persisted var sizes: List<PhotoSizeItem>
+    
+    override class func primaryKey() -> String? {
+        "id"
+    }
 }
 
 struct PhotosResponseOk: Decodable {
@@ -66,6 +74,7 @@ class VKAPI {
             guard let data = response.data else {return}
             do {
                 let friendsResponse = try JSONDecoder().decode(FriendsResponse.self, from: data)
+                self.saveUsersData(friendsResponse.response.items)
                 completionHandler(friendsResponse.response.items)
             } catch {
                 print(error)
@@ -83,6 +92,7 @@ class VKAPI {
                 for photo in friendsResponse.response.items {
                     aaa.append(photo.sizes[0].url)
                 }
+                self.savePhotoData(friendsResponse.response.items)
                 completionHandler(aaa)
             } catch {
                 print(error)
@@ -96,6 +106,7 @@ class VKAPI {
             guard let data = response.data else {return}
             do {
                 let groupsResponse = try JSONDecoder().decode(GroupsResponse.self, from: data)
+                self.saveGroupsData(groupsResponse.response.items)
                 completionHnadler(groupsResponse.response.items)
             } catch let error {
                 print(error)
@@ -107,6 +118,41 @@ class VKAPI {
     func searchGroups (q:String) {
         //        callAPI(method: "groups.search", params: ["q": q])
     }
+    
+    func saveUsersData(_ users: [User]) {
+        do {
+            try realm.write {
+                realm.add(users, update: .modified)
+            }
+            print(realm.configuration.fileURL ?? "")
+        } catch {
+            print(error)
+        }
+    }
+    
+    func savePhotoData(_ photos: [PhotoItem]) {
+        do {
+            try realm.write {
+                realm.add(photos, update: .modified)
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
+    func saveGroupsData(_ groups: [Group]) {
+        do {
+            let realm = try Realm()
+            realm.beginWrite()
+            realm.add(groups, update: .modified)
+            try realm.commitWrite()
+        } catch {
+            print(error)
+        }
+    }
+    
+    
+
 }
 
     

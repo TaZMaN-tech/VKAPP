@@ -7,6 +7,7 @@
 
 import UIKit
 import Fakery
+import RealmSwift
 
 class FriendsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, LetterPickerDelegate, UISearchBarDelegate {
     
@@ -28,8 +29,8 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UINib(nibName: "CustomHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "CustomHeader")
-        
-        setupAllFriends()
+        loadFriendsFromRealm()
+        //setupAllFriends()
         self.reloadDataSource()
         self.setupViews()
         
@@ -38,14 +39,27 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     //MARK: - Setup
     
-    private func setupAllFriends() {
-        service.getFriends() { friends in
-            self.allFriends = friends.filter { $0.firstName != "DELETED" }
+    func loadFriendsFromRealm() {
+        do {
+            let realm = try Realm()
+            let items = realm.objects(User.self)
+            self.allFriends = items.filter { $0.firstName != "DELETED" }
             self.reloadDataSource()
             self.tableView.reloadData()
             self.setupViews()
+        } catch {
+            print(error)
         }
     }
+    
+//    private func setupAllFriends() {
+//        service.getFriends() { friends in
+//            self.allFriends = friends.filter { $0.firstName != "DELETED" }
+//            self.reloadDataSource()
+//            self.tableView.reloadData()
+//            self.setupViews()
+//        }
+//    }
     
     private func reloadDataSource() {
         filterFriends(text: searchBar.text)

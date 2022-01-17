@@ -9,14 +9,18 @@ import Foundation
 import UIKit
 import Fakery
 import LoremSwiftum
+import RealmSwift
 
 let fakeGroups = Faker()
  
-struct Group: Decodable {
-    var name: String
-    var groupImage: String
-    var id: Int
+class Group: Object, Decodable {
+    @Persisted var name: String
+    @Persisted var groupImage: String
+    @Persisted var id: Int
     
+    override class func primaryKey() -> String? {
+        "id"
+    }
     
     enum CodingKeys: String, CodingKey {
         case name
@@ -24,7 +28,9 @@ struct Group: Decodable {
         case id
     }
     
-    init(from decoder: Decoder) throws {
+    required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
