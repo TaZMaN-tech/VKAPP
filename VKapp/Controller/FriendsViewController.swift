@@ -9,14 +9,18 @@ import UIKit
 import Fakery
 import RealmSwift
 
+
+
 class FriendsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, LetterPickerDelegate, UISearchBarDelegate {
     
     lazy var service = VKAPI()
+    var notificationToken: NotificationToken?
     
     var sections: [String] = []
-    var allFriends: [User] = []
+    var allFriends = List<User>()
     var filteredFriends: [User] = []
     var cashedSectionFriends: [String: [User]] = [:]
+
     
 //    let friends = User.randomMany.sorted { $0.fullName.lowercased() < $1.fullName.lowercased() }
     
@@ -29,8 +33,8 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UINib(nibName: "CustomHeader", bundle: nil), forHeaderFooterViewReuseIdentifier: "CustomHeader")
-        loadFriendsFromRealm()
-        //setupAllFriends()
+        setupAllFriends()
+        subscribeToNotification()
         self.reloadDataSource()
         self.setupViews()
         
@@ -39,11 +43,33 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     //MARK: - Setup
     
+    private func subscribeToNotification() {
+        do {
+            let realm = try Realm()
+            print(realm.configuration.fileURL ?? "")
+            notificationToken = realm.objects(User.self).observe { (changes) in
+                switch changes {
+                case .initial:
+                    break
+                case let .update(_, deletions, insertions, modifications):
+                    self.tableView.reloadData()
+                case .error(let error):
+                    print(error)
+                }
+                
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
     func loadFriendsFromRealm() {
         do {
             let realm = try Realm()
+            
             let items = realm.objects(User.self)
-            self.allFriends = items.filter { $0.firstName != "DELETED" }
+            self.allFriends.removeAll()
+            self.allFriends.append(objectsIn: items.filter("firstName != 'DELETED'"))
             self.reloadDataSource()
             self.tableView.reloadData()
             self.setupViews()
@@ -52,14 +78,12 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
         }
     }
     
-//    private func setupAllFriends() {
-//        service.getFriends() { friends in
-//            self.allFriends = friends.filter { $0.firstName != "DELETED" }
-//            self.reloadDataSource()
-//            self.tableView.reloadData()
-//            self.setupViews()
-//        }
-//    }
+    private func setupAllFriends() {
+        self.loadFriendsFromRealm()
+        service.getFriends() { _ in
+            self.loadFriendsFromRealm()
+        }
+    }
     
     private func reloadDataSource() {
         filterFriends(text: searchBar.text)
@@ -100,7 +124,7 @@ class FriendsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     func filterFriends(text: String?) {
         guard let text = text, !text.isEmpty else {
-            filteredFriends = allFriends
+            filteredFriends = Array(allFriends)
             return
         }
         

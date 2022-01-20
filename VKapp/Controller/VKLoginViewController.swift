@@ -21,7 +21,8 @@ class VKLoginViewController: UIViewController, WKNavigationDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         let userDefaults = UserDefaults.standard
-        let token = userDefaults.string(forKey: "accessToken") ?? ""
+        var token = userDefaults.string(forKey: "accessToken") ?? ""
+        token = ""
         if token != "" {
             doLogin(token)
         } else {
