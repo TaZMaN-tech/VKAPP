@@ -11,34 +11,57 @@ import RealmSwift
 class AllGroupsTableViewController: UITableViewController {
 
     lazy var service = VKAPI()
-    var groups: [Group] = [] //= Group.randomGroups
+    var groups: Results<Group>!
+    
+    var notificationToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         loadsGroupsFromRealm()
-       // setupGroups()
+        setupGroups()
+        subscribeToNotification()
         
     }
     
     //MARK: - Setup
     
+    private func subscribeToNotification() {
+        do {
+            let realm = try Realm()
+            print(realm.configuration.fileURL ?? "")
+            notificationToken = realm.objects(User.self).observe { (changes) in
+                switch changes {
+                case .initial:
+                    break
+                case let .update(_, deletions, insertions, modifications):
+                    self.tableView.reloadData()
+                case .error(let error):
+                    print(error)
+                }
+                
+            }
+        } catch {
+            print(error)
+        }
+    }
+    
     func loadsGroupsFromRealm() {
         do {
             let realm = try Realm()
             let items = realm.objects(Group.self)
-            self.groups = Array(items)
+            self.groups = items
             self.tableView.reloadData()
         } catch {
             print(error)
         }
     }
     
-//    private func setupGroups() {
-//        service.getGroups() { groups in
-//            self.groups = groups
-//            self.tableView.reloadData()
-//        }
-//    }
+    private func setupGroups() {
+        self.loadsGroupsFromRealm()
+        service.getGroups() { _ in
+            self.loadsGroupsFromRealm()
+        }
+    }
 
     // MARK: - Table view data source
 
