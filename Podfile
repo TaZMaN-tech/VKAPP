@@ -7,6 +7,9 @@ target 'VKapp' do
 	
   pod 'Alamofire', '~> 5.5'
   pod 'RealmSwift', '~>10'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Database'
+  pod 'Firebase/Firestore'
 
   # Pods for VKapp
 
