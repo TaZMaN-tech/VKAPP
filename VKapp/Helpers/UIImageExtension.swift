@@ -195,7 +195,7 @@ extension UIImage {
     // MARK: - LoadAvatar
     
     static func loadAvatar(_ title: String) -> UIImage? {
-        return UIImage(named: "Avatars/\(title)")
+        return UIImage(named: "\(title)")
     }
     
     static func loadImages(urls: [URL], completionHanldler: @escaping ([UIImage])->Void) {
