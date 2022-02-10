@@ -1,32 +1,23 @@
 //
-//  NewsCell.swift
+//  NewsFotoCell.swift
 //  VKapp
 //
-//  Created by Тадевос Курдоглян on 17.12.2021.
+//  Created by Тадевос Курдоглян on 08.02.2022.
 //
 
 import UIKit
 
-class NewsCell: UITableViewCell {
-
-    @IBOutlet weak var authorImageView: UIImageView!
-    @IBOutlet weak var authorLabel: UILabel!
-    @IBOutlet weak var dateLabel: UILabel!
-    @IBOutlet weak var newsTextLabel: UILabel!
+class NewsPhotoCell: UITableViewCell {
+    
     @IBOutlet weak var photosContainer: UIView!
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        authorImageView.layer.cornerRadius = authorImageView.frame.width / 2
     }
     
-//    func configure(item: News) {
-//        authorImageView.image = UIImage.loadAvatar(item.author.avatar)
-//        authorLabel.text = item.author.fullName
-//        dateLabel.text = item.postDate
-//        newsTextLabel.text = item.text 
-//        setupPhotos(item.photos)
-//    }
+    func configure(item: News) {
+        setupPhotos(item.photos)
+    }
     
     private func setupPhotos(_ photos: [String]) {
         photosContainer.isHidden = photos.count == 0
