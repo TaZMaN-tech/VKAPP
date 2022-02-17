@@ -15,7 +15,7 @@ struct News: Decodable {
     var newsTitle: String
     var authorName: String
     var authorImage: String
-    var author: User
+    //var author: User
     var postDate: String
     var text: String
     var photos: [String]
