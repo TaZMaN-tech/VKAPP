@@ -11,10 +11,11 @@ import LoremSwiftum
 
 let fakes = Faker()
 
-struct News {
+struct News: Decodable {
     var newsTitle: String
     var authorName: String
     var authorImage: String
+    var author: User
     var postDate: String
     var text: String
     var photos: [String]

@@ -11,6 +11,12 @@ final class NewsViewController: UITableViewController {
 
     let news = News.fake
     
+    lazy var service = VKAPI()
+    
+//    override func viewDidLoad() {
+//        service.getNews(comletionHandler: <#T##([News]) -> Void#>)
+//    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         news.count
     }

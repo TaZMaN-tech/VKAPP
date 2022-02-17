@@ -50,6 +50,15 @@ struct GroupsResponse: Decodable {
     var response: GroupsResponseOk
 }
 
+struct NewsResponseOk: Decodable {
+    var count: Int
+    var items: [News]
+}
+
+struct NewsResponse: Decodable {
+    var response: NewsResponseOk
+}
+
 class VKAPI {
     
     let baseUrl = "https://api.vk.com/method/"
@@ -58,6 +67,7 @@ class VKAPI {
     func callAPI(method: String, params: [String: String], completion: @escaping (AFDataResponse<Data>) -> Void) {
         var defParams = [
             "access_token": UserSession.shared.accessToken,
+            "scope": "wall",
             "v": vApi
         ]
         params.forEach { (key, value) in defParams[key] = value }
@@ -115,6 +125,21 @@ class VKAPI {
         }
     }
     
+    func getNews (comletionHandler: @escaping ([News]) -> Void) {
+        callAPI(method: "newsfeed.get", params: ["filter" : "post"], completion: { response in
+            guard let data = response.data else { return }
+            do {
+                let newsResponse = try JSONDecoder().decode(NewsResponse.self, from: data)
+                self.saveNewsData(newsResponse.response.items)
+                comletionHandler(newsResponse.response.items)
+            } catch let error {
+                print(error)
+                comletionHandler([])
+            }
+            
+        })
+    }
+    
     func searchGroups (q:String) {
         //        callAPI(method: "groups.search", params: ["q": q])
     }
@@ -151,6 +176,9 @@ class VKAPI {
         }
     }
     
+    func saveNewsData(_ news: [News]) {
+        
+    }
     
 
 }
