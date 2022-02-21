@@ -50,14 +50,14 @@ struct GroupsResponse: Decodable {
     var response: GroupsResponseOk
 }
 
-struct NewsResponseOk: Decodable {
-    var count: Int
-    var items: [News]
-}
-
-struct NewsResponse: Decodable {
-    var response: NewsResponseOk
-}
+//struct NewsResponseOk: Decodable {
+////    var count: Int
+//    var items: [News]
+//}
+//
+//struct NewsResponse: Decodable {
+//    var response: NewsResponseOk
+//}
 
 class VKAPI {
     
@@ -126,17 +126,22 @@ class VKAPI {
     }
     
     func getNews (comletionHandler: @escaping ([News]) -> Void) {
-        callAPI(method: "newsfeed.get", params: ["filter" : "post"], completion: { response in
-            guard let data = response.data else { return }
-            do {
-                let newsResponse = try JSONDecoder().decode(NewsResponse.self, from: data)
-                self.saveNewsData(newsResponse.response.items)
-                comletionHandler(newsResponse.response.items)
-            } catch let error {
-                print(error)
-                comletionHandler([])
+        callAPI(method: "newsfeed.get", params: ["filter" : "post", "start_from" : "next_from", "count" : "20"], completion: { response in
+            switch (response.result) {
+            case .success:
+                guard let data = response.data else { return }
+                print(String(decoding: data, as: UTF8.self))
+                do {
+                    let newsResponse = try JSONDecoder().decode(ResponseNews.self, from: data)
+                    self.saveNewsData(newsResponse.response.items)
+                    comletionHandler(newsResponse.response.items)
+                } catch let error {
+                    print(error)
+                    comletionHandler([])
+                }
+            case .failure:
+                return
             }
-            
         })
     }
     

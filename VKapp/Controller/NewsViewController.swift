@@ -9,7 +9,7 @@ import UIKit
 
 final class NewsViewController: UITableViewController {
 
-    let news = News.fake
+//    let news = News.fake
     
     lazy var service = VKAPI()
     
@@ -17,10 +17,10 @@ final class NewsViewController: UITableViewController {
 //        service.getNews(comletionHandler: <#T##([News]) -> Void#>)
 //    }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        news.count
-    }
-    
+//    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        news.count
+//    }
+//
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NewsCell
         

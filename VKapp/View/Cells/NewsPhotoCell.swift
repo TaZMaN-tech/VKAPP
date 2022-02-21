@@ -16,7 +16,7 @@ class NewsPhotoCell: UITableViewCell {
     }
     
     func configure(item: News) {
-        setupPhotos(item.photos)
+        setupPhotos(item.photosURL ?? [])
     }
     
     private func setupPhotos(_ photos: [String]) {

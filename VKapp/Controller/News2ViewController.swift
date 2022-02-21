@@ -9,16 +9,25 @@ import UIKit
 
 class News2ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
+    
     @IBOutlet weak var tableView: UITableView!
 
-    let news = News.fake
+    var news: [News] = []
+    let service = VKAPI()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        setupAllItems()
+        
     }
     
+    private func setupAllItems() {
+        service.getNews { news in
+            self.news = news
+            self.tableView.reloadData() }
+    }
     
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -35,7 +44,7 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
         let item = news[indexPath.section]
         if indexPath.row == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "NewsPhotoCell", for: indexPath) as! NewsPhotoCell
-            if !item.photos.isEmpty {
+            if !(item.photosURL?[indexPath.row].isEmpty ?? false) {
                 cell.configure(item: item)
             }
             return cell
@@ -66,7 +75,7 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
         view.backgroundColor = .lightGray
         
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width - 10, height: 60))
-        label.text = news[section].newsTitle
+        label.text = String(news[section].date)
         label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont(name: "AppleSDGothicNeo-Bold", size: 18)
