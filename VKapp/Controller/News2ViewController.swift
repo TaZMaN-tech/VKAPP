@@ -12,11 +12,16 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     @IBOutlet weak var tableView: UITableView!
 
-    var news: [News] = []
-    let service = VKAPI()
+    
+    private let service = VKAPI()
+    private var imageService: ImageService?
+    
+    private var news: [News] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        imageService = ImageService(container: tableView)
+        
         tableView.delegate = self
         tableView.dataSource = self
         setupAllItems()
@@ -24,9 +29,22 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
     }
     
     private func setupAllItems() {
-        service.getNews { news in
-            self.news = news
-            self.tableView.reloadData() }
+//        service.getNews { news in
+//            self.news = news
+//            self.tableView.reloadData() }
+        service.getUrl()
+            .get({ url in
+                print(url)
+            })
+            .then(on: DispatchQueue.global(), service.getData(_:))
+            .then(service.getParsedData(_:))
+            .then(service.getNews(_:))
+            .done(on: DispatchQueue.main) { news in
+                self.news = news
+                self.tableView.reloadData()
+            }.catch { error in
+                print(error)
+            }
     }
     
     
@@ -42,27 +60,47 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = news[indexPath.section]
-        if indexPath.row == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsPhotoCell", for: indexPath) as! NewsPhotoCell
-            if !(item.photosURL?[indexPath.row].isEmpty ?? false) {
+        
+        if !(item.photosURL?.isEmpty ?? false) {
+            switch indexPath.row {
+            case 0:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "NewsPhotoCell", for: indexPath) as! NewsPhotoCell
                 cell.configure(item: item)
+                return cell
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "NewsTextCell", for: indexPath) as! NewsTextCell
+                cell.configure(item: item)
+                return cell
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "AuthorCell", for: indexPath) as! AuthorCell
+                cell.configure(item: item)
+                return cell
+            case 3:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "LikesAndCommentsCell", for: indexPath) as! LikesAndCommentsCell
+                
+    //            cell.configure(item: news[indexPath.row])
+                return cell
+            default:
+                return UITableViewCell()
             }
-            return cell
-        } else if indexPath.row == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "NewsTextCell", for: indexPath) as! NewsTextCell
-            
-            cell.configure(item: item)
-            return cell
-        } else if indexPath.row == 2 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "AuthorCell", for: indexPath) as! AuthorCell
-            
-            cell.configure(item: item)
-            return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LikesAndCommentsCell", for: indexPath) as! LikesAndCommentsCell
-            
-//            cell.configure(item: news[indexPath.row])
-            return cell
+            switch indexPath.row {
+            case 0:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "NewsTextCell", for: indexPath) as! NewsTextCell
+                cell.configure(item: item)
+                return cell
+            case 1:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "AuthorCell", for: indexPath) as! AuthorCell
+                cell.configure(item: item)
+                return cell
+            case 2:
+                let cell = tableView.dequeueReusableCell(withIdentifier: "LikesAndCommentsCell", for: indexPath) as! LikesAndCommentsCell
+                
+    //            cell.configure(item: news[indexPath.row])
+                return cell
+            default:
+                return UITableViewCell()
+            }
         }
     }
     
@@ -75,7 +113,7 @@ class News2ViewController: UIViewController, UITableViewDataSource, UITableViewD
         view.backgroundColor = .lightGray
         
         let label = UILabel(frame: CGRect(x: 10, y: 0, width: tableView.frame.size.width - 10, height: 60))
-        label.text = String(news[section].date)
+        label.text = String(news[section].creatorName ?? "")
         label.textColor = .white
         label.textAlignment = .center
         label.font = UIFont(name: "AppleSDGothicNeo-Bold", size: 18)
