@@ -19,8 +19,8 @@ class AuthorCell: UITableViewCell {
     }
     
     func configure(item: News) {
-        authorImageView.image = UIImage.loadAvatar(item.authorImage)
-        authorLabel.text = item.authorName
-        dateLabel.text = item.postDate
+        authorImageView.loadImage(item.avatarURL ?? "")
+        authorLabel.text = item.creatorName
+        dateLabel.text = item.getStringDate()
     }
 }

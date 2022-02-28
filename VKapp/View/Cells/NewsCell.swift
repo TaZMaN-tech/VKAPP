@@ -121,7 +121,8 @@ class NewsCell: UITableViewCell {
     }
     
     private func createImageView(_ photo:String) -> UIImageView {
-        let imageView = UIImageView(image: UIImage.loadAvatar(photo))
+        let imageView = UIImageView()
+        imageView.loadImage(photo)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
